@@ -25,14 +25,14 @@
                                 <h4>Chi tiết đơn hàng </h4><br>
                                 <div>
                                     <h3>Thông tin khách hàng</h3>
-                                    <p><b>Tên khách hàng: </b>{{$order->name}}</p>
-                                    <p><b>Số điện thoại: </b>{{$order->phone}}</p>
-                                    <p><b>Địa chỉ: </b>{{$order->address}}</p>
+                                    <p><b>Tên khách hàng: </b>{{$order->customer->name}}</p>
+                                    <p><b>Số điện thoại: </b>{{$order->customer->phone}}</p>
+                                    <p><b>Địa chỉ: </b>{{$order->shipping_address}}</p>
                                     <p><b>Trạng thái đơn hàng: </b>{{$order->status}}</p>
                                 </div>
                             </div>
                             <div class="box_right d-flex lms_block">
-                                @if ($order->status === 'Chờ xác nhận')
+                                @if ($order->status === 'Đã đặt')
                                     <div class="add_button ms-2">
                                         <a  href="{{route('admin.confirm', $order->id)}}"
                                             class="btn_1"
@@ -62,9 +62,9 @@
                                     @foreach ($details as $item)
                                         <tr>
                                             <td>{{ $i++ }}</td>
-                                            <td>{{$item->product->name}}</td>
+                                            <td>{{$item->product->prodName}}</td>
                                             <td>
-                                                <img src="uploads/product/{{$item->product->image}}" alt="" width="40" height="40">
+                                                <img src="uploads/product/{{$item->product->image->url}}" alt="" width="40" height="40">
                                                 
                                             </td>
                                             <td>{{$item->quantity}}</td>

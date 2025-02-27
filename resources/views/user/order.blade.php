@@ -28,7 +28,6 @@
                     <tbody>
                         @foreach ($orders as $order)
                             @php
-                                
                                 $total = 0;
                             @endphp
                             @foreach ($order->orderDetails as $item)
@@ -37,11 +36,11 @@
                                 @endphp
                             @endforeach
                             <tr>
-                                <td>{{$order->created_at}}</td>
+                                <td>{{$order->created_at->format('d.m.Y H:i:s')}}</td>
                                 <td>{{$order->status}}</td>
                                 <td>{{$total}}</td>
                                 <td><a href="{{route('user.orderDetails', $order->id)}}"><b>Chi tiết</b></a></td>
-                                @if ($order->status === "Chờ xác nhận")
+                                @if ($order->status === "Đã đặt")
                                     <td><a href="{{route('home.cancelOrder', $order->id)}}" style="color: red"
                                         onclick="return confirm('Bạn muốn hủy đơn hàng này!')"    
                                     ><b>Hủy đơn</b></a></td>

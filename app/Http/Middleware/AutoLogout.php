@@ -18,6 +18,8 @@ class AutoLogout
     {
         if (Auth::guard('admin')->check() && !$request->is('admin') && !$request->is('admin/*')) { // Chỉ giữ đăng nhập ở trang admin
             Auth::guard('admin')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
             return redirect('/admin/login')->with('message', 'Bạn đã bị đăng xuất!');
         }
         return $next($request);

@@ -48,7 +48,6 @@
                                     <tr>
                                         <th scope="col">Số thứ tự</th>
                                         <th scope="col">Mã đơn hàng</th>
-                                        <th scope="col">Mã khách hàng</th>
                                         <th scope="col">Số tiền</th>
                                         <th scope="col">Ngày đặt hàng</th>
                                         <th scope="col">Trạng thái</th>
@@ -61,11 +60,18 @@
                                         $i=1; 
                                     @endphp
                                     @foreach ($orders as $order)
+                                        @php
+                                            $total = 0;
+                                        @endphp
+                                        @foreach ($order->orderDetails as $item)
+                                            @php
+                                                $total += $item->price;
+                                            @endphp
+                                        @endforeach
                                         <tr>
                                             <td>{{ $i++ }}</td>
-                                            <td>{{$order->id}}</td>
-                                            <td>{{$order->user_id}}</td>
-                                            <td>{{number_format($order->totalPrice)}}</td>
+                                            <td>{{ $order->id }}</td>
+                                            <td>{{ $total }}</td>
                                             <td>{{$order->created_at->format('d/m/Y')}}</td>
                                             <td>{{$order->status}}</td>
                                             <td>

@@ -7,7 +7,9 @@ use App\Mail\VerifyAccount;
 use App\Models\Customer;
 use App\Models\Order;
 use App\Models\Order_detail;
+use App\Models\PasswordResetToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
@@ -16,6 +18,7 @@ class UserController extends Controller
     {
         return view('user.login');
     }
+
     public function check_login(Request $request)
     {
         $request->validate([
@@ -72,7 +75,7 @@ class UserController extends Controller
 
         if ($acc = Customer::create($data)) {
             Mail::to($acc->email)->send(new VerifyAccount($acc));
-            return redirect()->route('user.login')->with('success_register', 'Đăng ký tài khoản thành công');
+            return redirect()->route('user.login')->with('ok', 'Đăng ký tài khoản thành công');
         }
         return redirect()->back()->with('warning', 'Đăng ký không thành công');
     }
@@ -82,9 +85,11 @@ class UserController extends Controller
         Customer::where('email', $email)->update(['email_verified_at' => date('Y-m-d H:i:s')]);
         return redirect()->route('user.login')->with('confirm_email', 'Xác nhận tài khoản thành công');
     }
-    public function check_logout()
+    public function check_logout(Request $request)
     {
         auth()->guard('customer')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
         return redirect()->route('home')->with('ok', 'Đã đăng xuất');
     }
 
@@ -110,7 +115,7 @@ class UserController extends Controller
         $data = $request->only(['name', 'address', 'phone']);
         $acc = Customer::where('email', $auth->email)->update($data);
         if ($acc) {
-            return redirect()->back()->with('update', 'Cập nhật thông tin thành công');
+            return redirect()->back()->with('ok', 'Cập nhật thông tin thành công');
         }
         return redirect()->back()->with('no_update', 'Cập nhật thông tin không thành công');
     }
@@ -128,7 +133,7 @@ class UserController extends Controller
 
     public function check_change_password(Request $request)
     {
-        $auth = auth()->user();
+        $auth = auth()->guard('customer')->user();
         $request->validate([
             'old_password' => ['required', function ($attr, $val, $fail) use ($auth) {
                 if (!Hash::check($val, $auth->password)) {
@@ -160,7 +165,7 @@ class UserController extends Controller
     public function check_forgot_password(Request $request)
     {
         $request->validate([
-            'email' => 'required|exists:users',
+            'email' => 'required|exists:customers',
         ], [
             'email.required' => 'Bạn phải nhập email',
             'email.exists' => 'Email không tồn tại'
@@ -175,9 +180,9 @@ class UserController extends Controller
             'token' => $token
         ];
 
-        if (passwordResetToken::create($data)) {
+        if (PasswordResetToken::create($data)) {
             Mail::to($request->email)->send(new ForgotPassword($user, $token));
-            return redirect()->route('user.login')->with('forgot_password', 'Link lấy lại mật khẩu đã được gửi đến email của bạn');
+            return redirect()->route('user.login')->with('ok', 'Link lấy lại mật khẩu đã được gửi đến email của bạn');
         }
 
         return view('user.forgot-password');
@@ -193,7 +198,7 @@ class UserController extends Controller
             'confirm_new_password' => 'required|same:new_password'
         ]);
 
-        $tokenData = passwordResetToken::checkToken($token);
+        $tokenData = PasswordResetToken::checkToken($token);
         $user = $tokenData->user;
 
         $data = [
@@ -201,8 +206,8 @@ class UserController extends Controller
         ];
         $check = $user->update($data);
         if ($check) {
-            passwordResetToken::deleteToken($token);  // Xóa token sau khi sử dụng
-            return redirect()->route('user.login')->with('reset_password', 'Mật khẩu đã được cập nhật thành công');
+            PasswordResetToken::deleteToken($token);  // Xóa token sau khi sử dụng
+            return redirect()->route('user.login')->with('ok', 'Mật khẩu đã được cập nhật thành công');
         }
         return  redirect()->back()->with('no_reset_password', 'Mật khẩu không được cập nhật thành công');
     }

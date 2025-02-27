@@ -16,10 +16,11 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $itemsList = Product::orderBy('name', 'ASC')->take(8)->get();
+        $itemsList = Product::orderBy('name', 'ASC')
+        ->take(8)
+        ->get();
         return view('home.index', compact('itemsList'));
     }
-
     public function tabList()
     {
         $category_id = request("category_id");
@@ -39,12 +40,10 @@ class HomeController extends Controller
     {
         return view('home.blog');
     }
-
     public function cart()
     {
         return view('home.cart');
     }
-
     public function add_to_cart(Request $request)
     {
         try {
@@ -80,7 +79,7 @@ class HomeController extends Controller
 
             // Tính lại tổng tiền và số lượng sản phẩm trong giỏ
             $price = $cart->items->sum(function ($item) {
-                return $item->quantity * $item->product->price;
+                return $item->quantity * $item->product->promotionalPrice;
             });
 
             $count = $cart->item_count;
@@ -98,8 +97,6 @@ class HomeController extends Controller
             return response()->json(['error' => 'Có lỗi trong quá trình thêm vào giỏ hàng: ' . $ex->getMessage()], 500);
         }
     }
-
-
     public function delete_cart(Request $request)
     {
         $cartItem = Cart_item::where('id', $request->item_cart_id)->first();
@@ -132,7 +129,6 @@ class HomeController extends Controller
         ])->delete();
         return redirect()->back()->with('ok', 'Đã xóa giỏ hàng');
     }
-
     public function destroy_cartItem($cartItem_id) {
         $cart_item = Cart_item::where([
             'id' => $cartItem_id,
@@ -147,7 +143,6 @@ class HomeController extends Controller
         }
         return redirect()->back()->with('ok', 'Đã xóa giỏ hàng');
     }
-
     public function checkout()
     {
         return view('home.checkout');
@@ -158,8 +153,6 @@ class HomeController extends Controller
         $orderData = $request->only(['payment_method', 'shipping_address']);
         $orderData['customer_id'] = $auth->id;
         $orderData['order_date'] = Carbon::now()->toDateString();
-        // dd($auth->cart->items);
-        // dd(Customer::where('id', $auth->id)->first()->cart);
         if ($order = Order::create($orderData)) {
             foreach ($auth->cart->items as $item) {
                 $dataDetail = [
@@ -168,22 +161,23 @@ class HomeController extends Controller
                     'quantity' => $item->quantity,
                 ];
                 Order_detail::create($dataDetail);
+                $auth->cart->items()->delete();
+                $auth->cart->item_count--;
+                $auth->cart->save();
             }
-            $auth->cart->items()->delete();
-            $auth->cart->item_count--;
-            $auth->cart->save();
             return redirect()->route('home')->with('ok', 'Đặt hàng thành công');
         }
         return redirect()->back()->with('error', 'Đặt hàng không thành công');
     }
-
     public function cancel_order($order_id)
     {
-        $order = order::where('id', $order_id)->first();
-        $orderDetail = Order_detail::where('order_id', $order_id)->first();
-        if ($order && $order->status === "Chờ xác nhận") {
-            if ($orderDetail) {
-                $orderDetail->delete();
+        $order = Order::where('id', $order_id)->first();
+        $orderDetails = Order_detail::where('order_id', $order_id)->get();
+        if ($order && $order->status === "Đã đặt") {
+            if ($orderDetails) {
+                foreach ($orderDetails as $orderDetail) {
+                    $orderDetail->delete();
+                }
                 $order->delete();
                 return redirect()->back()->with('ok', 'Đơn hàng đã hủy');
             }

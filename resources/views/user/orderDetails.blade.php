@@ -1,4 +1,4 @@
-@extends('account.index')
+@extends('user.index')
 
 @section('menu')
     <div class="col-lg-4 col-12">
@@ -22,20 +22,36 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $price = 0;
+                        @endphp
                         @foreach ($orderDetails as $item)
                             <tr>
-                                <td>{{$item->product->name}}</td>
+                                <td>{{$item->product->prodName}}</td>
                                 <td>
-                                    <img src="uploads/product/{{$item->product->image}}" alt="" width="40" height="40">
+                                    <img src="uploads/product/{{$item->product->image->url}}" alt="" width="40" height="40">
                                 </td>
                                 <td>{{$item->quantity}}</td>
                                 <td>{{$item->price}}</td>
+                                @php
+                                    $price += $item->price;
+                                @endphp
                             </tr>
                         @endforeach
+                        @if (isset($orderDetails))
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>Tổng tiền: </td>
+                                <td>
+                                    {{ $price }}
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
-            <a href="{{route('account.order')}}">Quay về</a>
+            <a href="{{route('user.order')}}">Quay về</a>
         </div>
     </div>
     <!-- Single Tab Content End -->

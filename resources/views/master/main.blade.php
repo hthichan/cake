@@ -219,7 +219,7 @@
                                                 href="{{ route('shop.details', $item->product_id) }}">{{ $item->product->prodName }}</a>
                                         </h6>
                                         <span class="mini-cart-item__quantity">{{ $item->quantity }} ×
-                                            {{ $item->product->price }}</span>
+                                            {{ $item->product->promotionalPrice }}</span>
                                     </div>
                                 </div>
                                 <!-- Mini Cart Item End  -->
@@ -240,7 +240,7 @@
                             @php
                                 $price = 0;
                                 foreach ($user_cart->items as $item) {
-                                    $price += $item->quantity * $item->product->price;
+                                    $price += $item->quantity * $item->product->promotionalPrice;
                                 }
                             @endphp
                             {{ $price }}

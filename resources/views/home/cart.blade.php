@@ -54,7 +54,7 @@
                                         <th class="text-start">
                                             <a href="{{route('shop.details', $item->product_id)}}">{{$item->product->prodName}}</a>
                                         </th>
-                                        <td>{{$item->product->price}} VNĐ</td>
+                                        <td>{{$item->product->promotionalPrice}} VNĐ</td>
                                         <td class="text-center cart-quantity">
                                             <!-- Quantity Start -->
                                             <div class="quantity">
@@ -66,7 +66,7 @@
                                             </div>
                                             <!-- Quantity End -->
                                         </td>
-                                        <td>{{$item->quantity * $item->product->price}} VNĐ</td>
+                                        <td>{{$item->quantity * $item->product->promotionalPrice}} VNĐ</td>
                                     </tr>
                                 @endforeach
                                 
@@ -85,8 +85,8 @@
                                 </div>
                                 <div class="cart-product-mobile-content">
                                     <h5 class="cart-product-mobile-title"><a href="{{route('shop.details', $item->product_id)}}">{{$item->product->prodName}}</a></h5>
-                                    <span class="cart-product-mobile-quantity">{{$item->quantity}} x {{$item->product->price}}</span>
-                                    <span class="cart-product-mobile-total"><b>Tổng:</b> {{$item->quantity * $item->product->price}}</span>
+                                    <span class="cart-product-mobile-quantity">{{$item->quantity}} x {{$item->product->promotionalPrice}}</span>
+                                    <span class="cart-product-mobile-total"><b>Tổng:</b> {{$item->quantity * $item->product->promotionalPrice}}</span>
                                     <!-- Quantity Start -->
                                     <div class="quantity">
                                         <div class="cart-plus-minus border-0"></div>
@@ -122,7 +122,7 @@
                                 @php
                                     $price = 0;
                                     foreach ($user_cart->items as $item) {
-                                        $price += $item->quantity * $item->product->price;
+                                        $price += $item->quantity * $item->product->promotionalPrice;
                                     }
                                 @endphp
                                 <tbody>
