@@ -260,9 +260,9 @@
                                                 class="review-title-date d-flex"
                                             >
                                                 <h5 class="title me-1">
-                                                    {{$review->user->name}} 
+                                                    {{$review->customer->name}} 
                                                 </h5>
-                                                <span> - {{$review->created_at->format('d/m/Y h:i A')}}</span>
+                                                <span> - {{$review->created_at->format('d/m/Y h:i')}}</span>
                                             </div>
                                             <!-- Review Title & Date End -->
                                             <!-- Rating Start -->
@@ -275,16 +275,24 @@
                                                 </span>
                                             </div>
                                             <!-- Rating End -->
-                                            <p>
-                                                {{$review->comment}}
-                                            </p>
+                                            <div >
+                                                <p style="display: inline-block;">
+                                                    {{$review->comment}}
+                                                </p>
+                                                @if(auth()->guard('customer')->check() && auth()->guard('customer')->user()->can('delete', $review))
+                                                    <a href="{{ route('evaluate.delete', $review->id) }}" 
+                                                        style="float: right; color: #f78181;"
+                                                        onclick="return confirm('Bạn có muốn xóa đánh giá')" 
+                                                        >Xóa</a>
+                                                @endif
+                                            </div>
                                         </div>
                                         <!-- Review Details End -->
                                     @endforeach
                                     <!-- Hiển thị liên kết phân trang -->
-                                    <div class="pagination">
-                                        {{ $reviews->links() }}
-                                    </div>
+                                </div>
+                                <div class="pagination">
+                                    {{ $reviews->links() }}
                                 </div>
                                 <!-- Review Top End -->
 
@@ -298,7 +306,7 @@
                                                 Thêm đánh giá của bạn
                                             </h5>
                                             <form
-                                                id="comments_prod"
+                                                id="form-comments_prod"
                                                 action=""
                                                 class="comments-area_form"
                                             >
@@ -333,7 +341,7 @@
                                                         data-url="{{route('review.comment')}}"
                                                         data-product_id="{{$product->id}}"
                                                     >
-                                                        Gửi
+                                                        Đánh giá
                                                     </button>
                                                 </div>
                                                 <!-- Comment Submit Button End -->

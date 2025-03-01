@@ -54,4 +54,8 @@ class Product extends Model
             get: fn() => ucfirst(mb_strtolower($this->name, 'UTF-8')),
         );
     }
+
+    public function reviews() {
+        return $this->hasMany(Evaluate::class, 'product_id', 'id');
+    }
 }

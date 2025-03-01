@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
-use App\Models\review;
+use App\Models\Evaluate;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -13,18 +13,24 @@ class ReviewController extends Controller
         $rating = request('rating');
         $product_id = request('product_id');
         $data = [
-            'user_id' => auth()->user()->id,
+            'customer_id' => auth()->guard('customer')->user()->id,
             'product_id' => $product_id,
             'rating' => $rating,
             'comment' => $comment,
         ];
         
-        if(review::create($data)) {
-            $product = product::where('id', $product_id)->first();
-            $view = view('partials.comment', compact('product'))->render();
+        if(Evaluate::create($data)) {
+            $product = Product::where('id', $product_id)->first();
+            $reviews = $product->evaluates()->paginate(5);
+            $view = view('partials.comment', compact('reviews'))->render();
             return response()->json(['html' => $view], 200);
         } else {
-            return response()->json(['error' => 'Lỗi khi đánh giá'], 500);
+            return response()->json(['error' => 'Lỗi khi đánh giá'], 403);
         }
+    }
+
+    public function delete(Evaluate $evaluate) {
+        $evaluate->delete();
+        return redirect()->back()->with('success','đã xóa bình luận');
     }
 }

@@ -52,8 +52,10 @@ Route::prefix('')->group(function () {
 
     //comment
     Route::post('/comment', [ReviewController::class, 'comment'])->name('review.comment');
+    Route::get('/evaluate/delete/{evaluate}', [ReviewController::class, 'delete'])->name('evaluate.delete');
 
     Route::post('/tabList', [HomeController::class, 'tabList'])->name('home.tabList');
+
 });
 
 Route::group(['prefix' => '/user'], function () {

@@ -1,33 +1,38 @@
-<!-- Review Top Start -->
-{{-- <div class="review-top d-flex mb-4 align-items-center"> --}}
-    @foreach ($product->reviews as $review)
-        <!-- Review Details Start -->
-        <div class="review_details ms-3 mb-5">
-            <!-- Rating Start -->
-            <div class="review-rating mb-2">
-                <span class="review-rating-bg">
-                    <span
-                        class="review-rating-active"
-                        style="width: {{$review->rating/5*100}}%"
-                    ></span>
-                </span>
-            </div>
-            <!-- Rating End -->
-            <!-- Review Title & Date Start -->
-            <div
-                class="review-title-date d-flex"
-            >
-                <h5 class="title me-1">
-                    {{$review->user->name}}
-                </h5>
-                <span>{{$review->created_at->format('d/m/Y h:i A')}}</span>
-            </div>
-            <!-- Review Title & Date End -->
-            <p>
+@foreach ($reviews as $review)
+    <!-- Review Details Start -->
+    <div class="review_details ms-3 mb-5">
+        <!-- Review Title & Date Start -->
+        <div
+            class="review-title-date d-flex"
+        >
+            <h5 class="title me-1">
+                {{$review->customer->name}} 
+            </h5>
+            <span> - {{$review->created_at->format('d/m/Y h:i')}}</span>
+        </div>
+        <!-- Review Title & Date End -->
+        <!-- Rating Start -->
+        <div class="review-rating mb-2">
+            <span class="review-rating-bg">
+                <span
+                    class="review-rating-active"
+                    style="width: {{$review->rating/5*100}}%"
+                ></span>
+            </span>
+        </div>
+        <!-- Rating End -->
+        <div >
+            <p style="display: inline-block;">
                 {{$review->comment}}
             </p>
+            @if(auth()->guard('customer')->check() && auth()->guard('customer')->user()->can('delete', $review))
+                <a href="{{ route('evaluate.delete', $review->id) }}" 
+                    style="float: right; color: #f78181;"
+                    onclick="return confirm('Bạn có muốn xóa đánh giá')" 
+                    >Xóa</a>
+            @endif
         </div>
-        <!-- Review Details End -->
-    @endforeach
-{{-- </div> --}}
-<!-- Review Top End -->
+    </div>
+    <!-- Review Details End -->
+@endforeach
+<!-- Hiển thị liên kết phân trang -->

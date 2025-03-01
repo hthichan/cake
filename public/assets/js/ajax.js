@@ -179,27 +179,34 @@ $(document).ready(function () {
     });
 
     //comments
-    $("#comments_prod").on("submit", function (e) {
+    $("#form-comments_prod").on("submit", function (e) {
         e.preventDefault(); // Chặn hành động mặc định của form
     });
     $(document).on("click", ".review_btn", function () {
         var selectedValue = $('input[name="star"]:checked').val();
         var cmt_content = $(".comment_content").val();
+        var url = $(this).data("url");
+        var product_id = $(this).data("product_id");
         $.ajax({
-            url: $(this).data("url"),
+            url: url,
             type: "POST",
             data: {
                 _token: csrfToken,
                 rating: selectedValue,
                 comment: cmt_content,
-                product_id: $(this).data("product_id"),
+                product_id: product_id,
             },
             success: function (response) {
                 $("#comments_prod").html(response.html);
-            },
+                // Làm trống ô nhập bình luận
+                $(".comment_content").val("");
+
+                // Bỏ chọn radio button (sao)
+                $('input[name="star"]').prop('checked', false);
+            }.bind(this),
             error: function (response) {
                 alert(response.responseJSON.error);
-            },
+            }.bind(this),
         });
     });
 
