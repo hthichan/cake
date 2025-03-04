@@ -147,7 +147,6 @@
                                     <ul class="account_action">
                                         <li><a href="{{ route('user.profile') }}">Thông tin cá nhân</a></li>
                                         <li><a href="{{ route('user.order') }}">Thông tin mua hàng</a></li>
-                                        <li><a href="{{ route('user.favorited') }}">Sản phẩm yêu thích</a></li>
                                         <li><a href="{{ route('user.logout') }}">Đăng xuất</a></li>
                                     </ul>
                                 @else

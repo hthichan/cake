@@ -55,7 +55,20 @@ class Product extends Model
         );
     }
 
-    public function reviews() {
-        return $this->hasMany(Evaluate::class, 'product_id', 'id');
+    protected function averageRating(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $count_rating = $this->evaluates()->count();
+                if ($count_rating === 0) {
+                    return 0; // Nếu không có đánh giá nào, trả về 0%
+                }
+
+                $starsCount = $this->evaluates()->sum('rating');
+                $average_rating = ($starsCount / $count_rating) * 20; // Chuyển đổi sang %
+
+                return round($average_rating, 2); // Làm tròn 2 chữ số thập phân
+            }
+        );
     }
 }

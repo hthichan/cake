@@ -100,12 +100,7 @@
                                                     data-product_id= "{{ $productItem->id }}"
                                                     data-url= "{{ route('home.add_to_cart') }}"></button>
                                             </li>
-                                            {{-- <li class="product-item__meta-action">
-                                                <button class="favorited shadow-1 labtn-icon-wishlist"
-                                                    data-product_id= "{{ $productItem->id }}"
-                                                    data-url="{{ route('home.favorited') }}"
-                                                    @if ($productItem->favorited) style="background-color: #bc8157" @endif></button>
-                                            </li> --}}
+                                            
                                         </ul>
                                     </div>
                                     <div class="product-item__content pt-5">

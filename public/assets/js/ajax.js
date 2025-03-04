@@ -1,5 +1,3 @@
-
-
 $(document).ready(function () {
     var csrfToken = $('meta[name="csrf-token"]').attr("content");
 
@@ -36,7 +34,7 @@ $(document).ready(function () {
     //add to cart
     $(document).on("click", ".addToCart", function () {
         var productId = $(this).data("product_id");
-        var url = $(this).data('url');
+        var url = $(this).data("url");
         $.ajax({
             url: url,
             type: "POST",
@@ -54,8 +52,7 @@ $(document).ready(function () {
             }.bind(this),
             error: function (response) {
                 alert(response.responseJSON.error);
-                console.log(response)
-
+                console.log(response);
             }.bind(this),
         });
     });
@@ -202,7 +199,12 @@ $(document).ready(function () {
                 $(".comment_content").val("");
 
                 // Bỏ chọn radio button (sao)
-                $('input[name="star"]').prop('checked', false);
+                $('input[name="star"]').prop("checked", false);
+
+                $("#review-rating").css("width", response.averageRating + "%");
+                $("#review-rating-text").html(
+                    `${response.countReviews} Review`
+                );
             }.bind(this),
             error: function (response) {
                 alert(response.responseJSON.error);
@@ -212,22 +214,22 @@ $(document).ready(function () {
 
     //tab_list
     $(document).on("click", ".btn-tab_list", function () {
-        var category_id = $(this).data('category_id') || 0;
-        var url = $(this).data('url');
+        var category_id = $(this).data("category_id") || 0;
+        var url = $(this).data("url");
         $.ajax({
             url: url,
             type: "POST",
             data: {
                 _token: csrfToken,
                 category_id: category_id,
-            }, 
+            },
             success: function (response) {
-                $(".tab-content").html(response.html)
+                $(".tab-content").html(response.html);
                 // alert(category_id)
             },
             error: function () {
                 alert("Lỗi hệ thống");
-            }
-        })
-    })
+            },
+        });
+    });
 });

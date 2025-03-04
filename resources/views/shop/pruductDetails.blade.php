@@ -122,19 +122,20 @@
                                 
                                 <span class="review-rating-bg">
                                     <span
+                                        id="review-rating"
                                         class="review-rating-active"
-                                        style="width: {{ $product->average_rating }}%"
+                                        style="width: {{ $product->averageRating }}%"
                                     ></span>
                                 </span>
-                                <a href="#/" class="review-rating-text"
+                                <a href="#/" id="review-rating-text" class="review-rating-text"
                                     >(
-                                        
-                                        @if (!is_null($product->reviews))
-                                            {{ $product->reviews->count() }}
+                                        @if (!is_null($product->evaluates))
+                                            {{ $product->evaluates->count() }}
                                         @else 
                                             0
                                         @endif
-                                     Review)</a
+                                        Review
+                                    )</a
                                 >
                                 
                                 <!-- Price Start -->
@@ -383,27 +384,34 @@
                         <div class="col mb-50">
                             <!-- Product Item Start -->
                             <div class="product-item text-center">
-                                <div class="product-item__badge">Hot</div>
+                                @if (!is_null($productItem->promotion_id))
+                                        <div class="product-item__badge">
+                                            - {{ $productItem->promotion->discount_percentage }} %
+                                        </div>
+                                    @endif
                                 <div class="product-item__image border w-100">
-                                    <a href="{{ route('shop.details', $productItem->id) }}"><img width="350" height="350" src="uploads/product/{{$productItem->image->url}}" alt="Product"></a>
+                                    <a href="{{ route('shop.details', $productItem->id) }}"><img width="350"
+                                        height="350" src="uploads/product/{{ $productItem->image->url }}"
+                                        alt="Product"></a>
                                     <ul class="product-item__meta">
                                         <li class="product-item__meta-action">
-                                            <a class="shadow-1 labtn-icon-quickview" href="#/" data-bs-tooltip="tooltip" data-bs-placement="top" title="Quick View" data-bs-toggle="modal" data-bs-target="#exampleProductModal"></a>
+                                            <button class="addToCart shadow-1 labtn-icon-cart"
+                                                data-product_id= "{{ $productItem->id }}"
+                                                data-url= "{{ route('home.add_to_cart') }}"></button>
                                         </li>
-                                        <li class="product-item__meta-action">
-                                            <a class="shadow-1 labtn-icon-cart" href="#/" data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to Cart" data-bs-toggle="modal" data-bs-target="#modalCart"></a>
-                                        </li>
-                                        <li class="product-item__meta-action">
-                                            <a class="shadow-1 labtn-icon-wishlist" href="#/" data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to wishlist" data-bs-toggle="modal" data-bs-target="#modalWishlist"></a>
-                                        </li>
-                                        <li class="product-item__meta-action">
-                                            <a class="shadow-1 labtn-icon-compare" href="#/" data-bs-tooltip="tooltip" data-bs-placement="top" title="Add to compare" data-bs-toggle="modal" data-bs-target="#modalCompare"></a>
-                                        </li>
+                                        
                                     </ul>
                                 </div>
                                 <div class="product-item__content pt-5">
-                                    <h5 class="product-item__title"><a href="{{ route('shop.details', $productItem->id) }}">{{ $productItem->name }}</a></h5>
-                                    <span class="product-item__price">{{ $productItem->price }}</span>
+                                    <h5 class="product-item__title"><a
+                                            href="{{ route('shop.details', $productItem->id) }}">{{ $productItem->prodName }}</a>
+                                    </h5>
+                                    @if (is_null($productItem->promotion_id))
+                                        <span class="product-item__price">{{ $productItem->price }} VND</span>
+                                    @else
+                                        <span class="product-item__price" style="text-decoration: line-through red; font-size: 16px;">{{ $productItem->price }} VND</span>
+                                        <span class="product-item__price">{{ $productItem->promotionalPrice }} VND</span>
+                                    @endif
                                 </div>
                             </div>
                             <!-- Product Item End -->
